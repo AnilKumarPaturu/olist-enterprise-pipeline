@@ -1,0 +1,26 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Airflow
+logs/
+airflow.db
+airflow.cfg
+webserver_config.py
+
+# Terraform (CRITICAL - Do not push state files!)
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+.terraform.lock.hcl
+
+# Data
+data/
+*.csv
+*.parquet
+*.json
+
+# Credentials
+*.json # Prevents accidental push of GCP service account keys
+.env
