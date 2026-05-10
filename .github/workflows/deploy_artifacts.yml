@@ -1,0 +1,32 @@
+name: Deploy PySpark Artifacts to GCS
+
+on:
+  push:
+    branches:
+      - main
+    # Only trigger this workflow if Python scripts are changed
+    paths:
+      - 'scripts/**' 
+
+jobs:
+  deploy-to-gcs:
+    name: Sync Scripts to Data Lake
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          # This grabs the secret you will save in GitHub
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Upload Scripts to Artifacts Bucket
+        uses: google-github-actions/upload-cloud-storage@v2
+        with:
+          path: 'scripts'
+          destination: 'olist-artifacts-prod-lake'
+          # This ensures the files land in gs://olist-artifacts-prod-lake/scripts/

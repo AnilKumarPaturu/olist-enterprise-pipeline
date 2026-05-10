@@ -42,6 +42,7 @@ resource "google_storage_bucket" "quarantine_lake" {
   name          = "olist-quarantine-prod-lake"
   location      = "asia-south1"
   force_destroy = true
+  uniform_bucket_level_access = true
   
   # Auto-delete quarantined data after 90 days to save costs if no one fixes it
   lifecycle_rule {
@@ -61,6 +62,7 @@ resource "google_storage_bucket" "artifacts_bucket" {
   name          = "olist-artifacts-prod-lake" # Must be globally unique!
   location      = "asia-south1"
   force_destroy = true
+  uniform_bucket_level_access = true
   
   # Automatically clean up old code versions if versioning is enabled later
   lifecycle_rule {
