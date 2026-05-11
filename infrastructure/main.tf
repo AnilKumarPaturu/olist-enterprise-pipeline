@@ -100,7 +100,8 @@ locals {
     "roles/dataproc.worker",
     "roles/storage.objectAdmin",
     "roles/bigquery.dataEditor",
-    "roles/bigquery.jobUser"
+    "roles/bigquery.jobUser",
+    "roles/iam.serviceAccountUser"
   ]
 }
 
@@ -137,7 +138,7 @@ resource "google_compute_firewall" "allow_airflow_ui" {
 # ==========================================
 resource "google_compute_instance" "airflow_vm" {
   name         = "airflow-orchestrator-prod"
-  machine_type = "e2-micro"
+  machine_type = "e2-medium"
 
   boot_disk {
     initialize_params {

@@ -20,7 +20,7 @@ CLUSTER_CONFIG = {
         "num_instances": 0
     },
     "gce_cluster_config": {
-        "service_account": "dataproc-sa@ecommerce-de-project-495511.iam.gserviceaccount.com"
+        "service_account": "dataproc-airflow-sa-prod@ecommerce-de-project-495511.iam.gserviceaccount.com"
     }
 }
 
