@@ -54,7 +54,7 @@ with DAG(
     # Task 2: Run Bronze to Silver (DQ Checks & Cleaning)
     run_bronze_to_silver = DataprocSubmitPySparkJobOperator(
         task_id="run_bronze_to_silver",
-        main=f"gs://{ARTIFACTS_BUCKET}/transform_job_to_silver.py",
+        main=f"gs://{ARTIFACTS_BUCKET}/scripts/transform_job_to_silver.py",
         cluster_name=CLUSTER_NAME,
         region=REGION,
         project_id=PROJECT_ID,
@@ -63,7 +63,7 @@ with DAG(
     # Task 3. Run Silver to Gold (Business Aggregations & Joins)
     run_silver_to_gold = DataprocSubmitPySparkJobOperator(
         task_id="run_silver_to_gold",
-        main=f"gs://{ARTIFACTS_BUCKET}/transform_job_to_gold.py",
+        main=f"gs://{ARTIFACTS_BUCKET}//scripts/transform_job_to_gold.py",
         cluster_name=CLUSTER_NAME,
         region=REGION,
         project_id=PROJECT_ID,
