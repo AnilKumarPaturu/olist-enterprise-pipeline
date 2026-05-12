@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator,DataprocSubmitPySparkJobOperator,DataprocDeleteClusterOperator
+from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator, DataprocSubmitPySparkJobOperator, DataprocDeleteClusterOperator
 from airflow.utils.dates import days_ago
 from datetime import timedelta
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
@@ -24,8 +24,6 @@ CLUSTER_CONFIG = {
     }
 }
 
-# PYSPARK_URI = f"gs://imp-files/transform_job_to_silver.py"
-
 default_args = {
     'owner': 'data_engineer',
     'depends_on_past' : False,
@@ -42,6 +40,7 @@ with DAG(
     start_date = days_ago(1),
     tags = ['transformation', 'pyspark'],
 ) as dag:
+    
     # Task 1: Create the Cluster
     create_cluster  = DataprocCreateClusterOperator(
         task_id = 'create_cluster',
@@ -51,19 +50,29 @@ with DAG(
         cluster_config = CLUSTER_CONFIG,
         gcp_conn_id = 'google_cloud_conn'
     )
+    
     # Task 2: Run Bronze to Silver (DQ Checks & Cleaning)
     run_bronze_to_silver = DataprocSubmitPySparkJobOperator(
         task_id="run_bronze_to_silver",
         main=f"gs://{ARTIFACTS_BUCKET}/scripts/transform_job_to_silver.py",
+        # --- INJECTING THE GZIP FIX HERE ---
+        dataproc_properties={
+            "spark.hadoop.fs.gs.input.stream.support.content.encoding.gzip": "true"
+        },
         cluster_name=CLUSTER_NAME,
         region=REGION,
         project_id=PROJECT_ID,
         gcp_conn_id='google_cloud_conn'
     )
+    
     # Task 3. Run Silver to Gold (Business Aggregations & Joins)
     run_silver_to_gold = DataprocSubmitPySparkJobOperator(
         task_id="run_silver_to_gold",
-        main=f"gs://{ARTIFACTS_BUCKET}//scripts/transform_job_to_gold.py",
+        main=f"gs://{ARTIFACTS_BUCKET}/scripts/transform_job_to_gold.py", # Fixed typo here
+        # --- INJECTING THE GZIP FIX HERE ---
+        dataproc_properties={
+            "spark.hadoop.fs.gs.input.stream.support.content.encoding.gzip": "true"
+        },
         cluster_name=CLUSTER_NAME,
         region=REGION,
         project_id=PROJECT_ID,
@@ -91,6 +100,7 @@ with DAG(
         autodetect=True,
         gcp_conn_id = 'google_cloud_conn'
     )
+    
     # 6. Load BigQuery - Logistics
     load_logistics_bq = GCSToBigQueryOperator(
         task_id='load_logistics_bq',
@@ -115,9 +125,10 @@ with DAG(
         gcp_conn_id='google_cloud_conn'
     )
 
+    # Dependencies
     create_cluster >> run_bronze_to_silver >> run_silver_to_gold 
 
     # As soon as Gold is done, fan-out and load all BQ tables in parallel
     run_silver_to_gold >> [load_sales_bq , load_logistics_bq, load_rfm_bq]
 
-    [load_sales_bq,load_logistics_bq,load_rfm_bq] >> delete_cluster
+    [load_sales_bq, load_logistics_bq, load_rfm_bq] >> delete_cluster
