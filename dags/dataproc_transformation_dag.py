@@ -19,6 +19,12 @@ CLUSTER_CONFIG = {
     "worker_config": {
         "num_instances": 0
     },
+    # --- ADD THIS BLOCK ---
+    "software_config": {
+        "properties": {
+            "core:fs.gs.input.stream.support.content.encoding.gzip": "true"
+        }
+    },
     "gce_cluster_config": {
         "service_account": "dataproc-airflow-sa-prod@ecommerce-de-project-495511.iam.gserviceaccount.com"
     }
