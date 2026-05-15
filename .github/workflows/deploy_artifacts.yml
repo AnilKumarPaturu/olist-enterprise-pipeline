@@ -29,4 +29,5 @@ jobs:
         with:
           path: 'scripts'
           destination: 'olist-artifacts-prod-lake'
+          gzip: false
           # This ensures the files land in gs://olist-artifacts-prod-lake/scripts/
