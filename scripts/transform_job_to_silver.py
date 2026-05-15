@@ -4,7 +4,6 @@ from pyspark.sql.window import Window
 from pyspark.sql.functions import current_timestamp
 
 spark = SparkSession.builder.appName("DQ-Pipeline") \
-.config("spark.hadoop.fs.gs.input.stream.support.content.encoding.gzip", "true") \
 .getOrCreate()
 
 DQ_CONTRACT = {
