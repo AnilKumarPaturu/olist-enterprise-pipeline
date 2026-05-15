@@ -32,8 +32,7 @@ with DAG(
             gcp_conn_id = 'google_cloud_conn',
             sql = f'select * from {table}',
             bucket = GCS_BUCKET_NAME,
-            filename = f'{table}/{table}_raw_data.csv',
-            export_format = 'csv',
-            gzip = False,
+            filename = f'{table}/{table}_raw_data_{{{{ ds }}}}.parquet',
+            export_format = 'parquet',
             use_server_side_cursor=True
         )
