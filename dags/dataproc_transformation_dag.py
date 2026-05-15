@@ -56,10 +56,6 @@ with DAG(
     run_bronze_to_silver = DataprocSubmitPySparkJobOperator(
         task_id="run_bronze_to_silver",
         main=f"gs://{ARTIFACTS_BUCKET}/scripts/transform_job_to_silver.py",
-        # --- INJECTING THE GZIP FIX HERE ---
-        dataproc_properties={
-            "spark.hadoop.fs.gs.input.stream.support.content.encoding.gzip": "true"
-        },
         cluster_name=CLUSTER_NAME,
         region=REGION,
         project_id=PROJECT_ID,
@@ -70,10 +66,6 @@ with DAG(
     run_silver_to_gold = DataprocSubmitPySparkJobOperator(
         task_id="run_silver_to_gold",
         main=f"gs://{ARTIFACTS_BUCKET}/scripts/transform_job_to_gold.py", # Fixed typo here
-        # --- INJECTING THE GZIP FIX HERE ---
-        dataproc_properties={
-            "spark.hadoop.fs.gs.input.stream.support.content.encoding.gzip": "true"
-        },
         cluster_name=CLUSTER_NAME,
         region=REGION,
         project_id=PROJECT_ID,
