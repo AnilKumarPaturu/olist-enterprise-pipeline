@@ -1,4 +1,4 @@
-```yaml id="ghx91q"
+
 name: Deploy PySpark Artifacts to GCS
 
 on:
@@ -27,4 +27,4 @@ jobs:
       - name: Upload PySpark Scripts
         run: |
           gsutil cp scripts/*.py gs://olist-artifacts-prod-lake/scripts/
-```
+
