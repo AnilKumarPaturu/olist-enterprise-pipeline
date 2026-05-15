@@ -1,4 +1,3 @@
-
 name: Deploy PySpark Artifacts to GCS
 
 on:
