@@ -55,7 +55,7 @@ def process_bronze_to_silver(spark):
     for table in tables_to_process:
         print(f"--- Processing {table} ---")
         # Read Bronze
-        raw_df = spark.read.format("parquet").load(f"gs://olist-bronze-prod-lake/{table}*.parquet/")
+        raw_df = spark.read.format("parquet").load(f"gs://olist-bronze-prod-lake/{table}/")
         # Run DQ Check
         clean_df, bad_df = apply_dq_rules(raw_df, table)
 
